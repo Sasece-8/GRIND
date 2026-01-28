@@ -1,7 +1,9 @@
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "http://localhost:3000" || process.env.VITE_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
