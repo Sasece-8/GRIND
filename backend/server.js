@@ -21,8 +21,22 @@ app.use(express.urlencoded({ limit: '200mb', extended: true }));
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://grind-lms.vercel.app"], // React (Vite) frontend & Vercel deployment
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://grind-lms.vercel.app"
+      ];
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
+    optionsSuccessStatus: 200
   })
 );
 
