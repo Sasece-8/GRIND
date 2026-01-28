@@ -15,8 +15,13 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         select : false,
-    }
-});
+    },
+    role: {
+        type: String,
+        enum: ['student', 'educator', 'admin'],   // add more roles if needed
+        default: 'student',
+    },
+},{timestamps: true});
 
 userSchema.statics.hashPassword = async function(password) {
     const salt = await bcrypt.genSalt(10);
@@ -27,15 +32,16 @@ userSchema.methods.comparePassword = async function(password) {
     return await bcrypt.compare(password, this.password);
 };
 
-userSchema.methods.generateJWT = function() {
-    const token = jwt.sign(
-        { email: this.email },
+userSchema.methods.generateJWT = function () {
+    return jwt.sign(
+        { id: this._id, email: this.email, role: this.role },
         process.env.JWT_SECRET,
-        { expiresIn: '24h' } // Token expires in 24 hours
+        { expiresIn: "24h" }
     );
-    return token;
 };
 
-const User = mongoose.model("user", userSchema);
+
+
+const User = mongoose.model("User", userSchema);
 
 export default User;

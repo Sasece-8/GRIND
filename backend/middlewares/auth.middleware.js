@@ -22,3 +22,11 @@ export const authUser = async (req, res, next) => {
         return res.status(403).send({ error: 'Unauthorised User' });
     }
 }
+
+export const isAdmin = async (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        next();
+    } else {
+        return res.status(403).json({ error: 'Access denied. Admins only.' });
+    }
+}

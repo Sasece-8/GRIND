@@ -9,12 +9,18 @@ export const createUserController = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    let { email, password } = req.body;
+    const { email, password, role } = req.body;
 
     try {
-        const user = await userService.createUser({ email, password });
+        const user = await userService.createUser({
+            email,
+            password,
+            role
+        });
+
         const token = user.generateJWT();
-        delete user._doc.password; // Remove password from response
+        delete user._doc.password;
+
         res.status(201).json({
             user,
             token
@@ -22,7 +28,8 @@ export const createUserController = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}
+};
+
 
 export const loginUserController = async (req, res) => {
     const errors = validationResult(req);
